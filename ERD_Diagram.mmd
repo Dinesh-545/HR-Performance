@@ -1,0 +1,97 @@
+erDiagram
+  EMPLOYEE {
+    int Id PK
+    string FirstName
+    string LastName
+    string Email
+    string Role
+    int ManagerId FK
+    int DepartmentId FK
+  }
+  DEPARTMENT {
+    int Id PK
+    string Name
+  }
+  GOAL {
+    int Id PK
+    string Title
+    string Description
+    DateTime StartDate
+    DateTime EndDate
+    string Status
+    int EmployeeId FK
+    int ManagerId FK
+    string Notes
+  }
+  REVIEW {
+    int Id PK
+    int CycleId FK
+    int ReviewerId FK
+    int RevieweeId FK
+    int TemplateId FK
+    int Rating
+    string Comments
+    string AttachmentPath
+    bool IsLocked
+  }
+  REVIEWCYCLE {
+    int Id PK
+    string Name
+    string Type
+    DateTime StartDate
+    DateTime EndDate
+  }
+  REVIEWTEMPLATE {
+    int Id PK
+    string Name
+    string StructureJson
+  }
+  SKILL {
+    int Id PK
+    string Name
+    string Description
+  }
+  EMPLOYEESKILL {
+    int Id PK
+    int EmployeeId FK
+    int SkillId FK
+    int ProficiencyLevel
+  }
+  SKILLRATING {
+    int Id PK
+    int EmployeeSkillId FK
+    int RatedById FK
+    int Rating
+    string Notes
+  }
+  DEVELOPMENTPLAN {
+    int Id PK
+    int EmployeeId FK
+    string Action
+    string ResourceLink
+    string Notes
+  }
+  USER {
+    int Id PK
+    string Username
+    string PasswordHash
+    string Role
+    int EmployeeId FK
+  }
+  
+  EMPLOYEE ||--o{ GOAL : "has"
+  EMPLOYEE ||--o{ EMPLOYEESKILL : "has"
+  EMPLOYEE ||--o{ REVIEW : "reviewee"
+  EMPLOYEE ||--o{ REVIEW : "reviewer"
+  EMPLOYEE ||--o{ DEVELOPMENTPLAN : "has"
+  EMPLOYEE ||--o{ USER : "account"
+  EMPLOYEE ||--o{ EMPLOYEE : "manages"
+  DEPARTMENT ||--o{ EMPLOYEE : "has"
+  GOAL }o--|| EMPLOYEE : "assigned to"
+  GOAL }o--|| EMPLOYEE : "managed by"
+  REVIEWCYCLE ||--o{ REVIEW : "has"
+  REVIEWTEMPLATE ||--o{ REVIEW : "uses"
+  SKILL ||--o{ EMPLOYEESKILL : "tagged"
+  EMPLOYEESKILL ||--o{ SKILLRATING : "rated"
+  DEVELOPMENTPLAN ||--|| EMPLOYEE : "for"
+  USER ||--|| EMPLOYEE : "for" 

@@ -1,0 +1,241 @@
+<div class="goals-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Goals Management</mat-card-title>
+      <mat-card-subtitle>Track and manage performance goals</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card total">
+          <div class="card-content">
+            <mat-icon>assignment</mat-icon>
+            <div class="card-text">
+              <h3>{{ getTotalGoals() }}</h3>
+              <p>Total Goals</p>
+            </div>
+          </div>
+        </div>
+        <div class="summary-card in-progress">
+          <div class="card-content">
+            <mat-icon>trending_up</mat-icon>
+            <div class="card-text">
+              <h3>{{ getGoalsByStatus('In Progress') }}</h3>
+              <p>In Progress</p>
+            </div>
+          </div>
+        </div>
+        <div class="summary-card completed">
+          <div class="card-content">
+            <mat-icon>check_circle</mat-icon>
+            <div class="card-text">
+              <h3>{{ getGoalsByStatus('Completed') }}</h3>
+              <p>Completed</p>
+            </div>
+          </div>
+        </div>
+        <div class="summary-card on-hold">
+          <div class="card-content">
+            <mat-icon>pause_circle</mat-icon>
+            <div class="card-text">
+              <h3>{{ getGoalsByStatus('On Hold') }}</h3>
+              <p>On Hold</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters Section -->
+      <div class="filters-section">
+        <div class="search-filter">
+          <mat-form-field appearance="outline">
+            <mat-label>Search Goals</mat-label>
+            <input matInput [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Search by title or description">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="status-filter">
+          <mat-form-field appearance="outline">
+            <mat-label>Filter by Status</mat-label>
+            <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusChange()">
+              <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+                {{ status.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="employee-filter">
+          <mat-form-field appearance="outline">
+            <mat-label>Filter by Employee</mat-label>
+            <mat-select [(ngModel)]="selectedEmployee" (selectionChange)="onEmployeeChange()">
+              <mat-option value="">All Employees</mat-option>
+              <mat-option *ngFor="let emp of employees" [value]="(emp?.Id || emp?.id)?.toString() || ''">
+                {{ emp?.FirstName || emp?.firstName }} {{ emp?.LastName || emp?.lastName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <button mat-button color="warn" (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+
+      <!-- Results Summary -->
+      <div class="results-summary">
+        <span>{{ filteredGoals.length }} of {{ goals.length }} goals</span>
+      </div>
+
+      <!-- Team Performance Summary -->
+      <div class="team-performance-summary" *ngIf="isManager()">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Team Performance Summary</mat-card-title>
+            <mat-card-subtitle>Overview of your team's goal completion</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="team-stats">
+              <div class="stat-item">
+                <span class="stat-number">{{ getTeamCompletionRate() }}%</span>
+                <span class="stat-label">Team Completion Rate</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{{ getOverdueGoalsCount() }}</span>
+                <span class="stat-label">Overdue Goals</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{{ getTeamMembersCount() }}</span>
+                <span class="stat-label">Team Members</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Add Goal Button -->
+      <div class="add-goal-section">
+        <button mat-raised-button color="primary" (click)="openAddGoalDialog()">
+          <mat-icon>add</mat-icon>
+          Add New Goal
+        </button>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading goals...</p>
+      </div>
+
+      <!-- Goals Table -->
+      <div *ngIf="!loading" class="table-container">
+        <table mat-table [dataSource]="filteredGoals" class="goals-table">
+          <!-- ID Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let goal">{{ getGoalId(goal) }}</td>
+          </ng-container>
+
+          <!-- Title Column -->
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>Title</th>
+            <td mat-cell *matCellDef="let goal">
+              <div class="goal-title">
+                <strong>{{ getGoalTitle(goal) }}</strong>
+                <p class="goal-description">{{ getGoalDescription(goal) }}</p>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Employee Column -->
+          <ng-container matColumnDef="employee">
+            <th mat-header-cell *matHeaderCellDef>Employee</th>
+            <td mat-cell *matCellDef="let goal">
+              <div class="employee-info">
+                <strong>{{ getGoalEmployee(goal)?.FirstName || getGoalEmployee(goal)?.firstName }} {{ getGoalEmployee(goal)?.LastName || getGoalEmployee(goal)?.lastName }}</strong>
+                <p class="employee-role">{{ getGoalEmployee(goal)?.Role || getGoalEmployee(goal)?.role }}</p>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let goal">
+              <mat-chip-listbox>
+                <mat-chip [color]="getStatusColor(getGoalStatus(goal))" selected>
+                  {{ getGoalStatus(goal) }}
+                </mat-chip>
+              </mat-chip-listbox>
+            </td>
+          </ng-container>
+
+          <!-- Progress Column -->
+          <ng-container matColumnDef="progress">
+            <th mat-header-cell *matHeaderCellDef>Progress</th>
+            <td mat-cell *matCellDef="let goal">
+              <div class="progress-container">
+                <mat-progress-bar 
+                  [value]="getProgressPercentage(goal)" 
+                  [color]="getStatusColor(getGoalStatus(goal))">
+                </mat-progress-bar>
+                <span class="progress-text">{{ getProgressPercentage(goal) }}%</span>
+                <button mat-icon-button color="primary" 
+                        (click)="updateGoalProgress(goal)" 
+                        matTooltip="Update Progress"
+                        class="progress-update-btn">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Due Date Column -->
+          <ng-container matColumnDef="dueDate">
+            <th mat-header-cell *matHeaderCellDef>Due Date</th>
+            <td mat-cell *matCellDef="let goal">
+              <div class="due-date">
+                <span>{{ getGoalEndDate(goal) | date:'shortDate' }}</span>
+                <span class="days-remaining" [class.overdue]="getDaysRemaining(goal) < 0">
+                  {{ getDaysRemaining(goal) < 0 ? 'Overdue' : 
+                     getDaysRemaining(goal) === 0 ? 'Due Today' : 
+                     getDaysRemaining(goal) + ' days left' }}
+                </span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let goal">
+              <div class="action-buttons">
+                <button mat-icon-button color="primary" (click)="openEditGoalDialog(goal)" 
+                        matTooltip="Edit Goal">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteGoal(goal)" 
+                        matTooltip="Delete Goal">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <!-- No Data Message -->
+        <div *ngIf="filteredGoals.length === 0" class="no-data">
+          <mat-icon>assignment_outline</mat-icon>
+          <p>No goals found</p>
+          <p *ngIf="searchTerm || selectedStatus || selectedEmployee">Try adjusting your filters</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

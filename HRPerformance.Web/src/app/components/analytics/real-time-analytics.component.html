@@ -1,0 +1,122 @@
+<div class="real-time-analytics-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Real-Time Analytics Dashboard</mat-card-title>
+      <mat-card-subtitle>Live monitoring and activity tracking</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Loading Spinner -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading real-time data...</p>
+      </div>
+
+      <!-- Real-Time Content -->
+      <div *ngIf="!loading">
+        <!-- Live Status Bar -->
+        <div class="live-status-bar">
+          <div class="status-indicator" [class.live]="isLive">
+            <mat-icon>{{ isLive ? 'fiber_manual_record' : 'radio_button_unchecked' }}</mat-icon>
+            <span>{{ isLive ? 'LIVE' : 'PAUSED' }}</span>
+          </div>
+          <button mat-button (click)="toggleLiveUpdates()">
+            <mat-icon>{{ isLive ? 'pause' : 'play_arrow' }}</mat-icon>
+            {{ isLive ? 'Pause Updates' : 'Resume Updates' }}
+          </button>
+        </div>
+
+        <!-- Real-Time Metrics -->
+        <div class="real-time-metrics">
+          <h3>Live Metrics</h3>
+          <div class="metrics-grid">
+            <div *ngFor="let metric of realTimeMetrics" class="metric-card" 
+                 [style.border-left-color]="metric.color">
+              <div class="metric-header">
+                <div class="metric-icon">
+                  <mat-icon [style.color]="metric.color">{{ metric.icon }}</mat-icon>
+                </div>
+                <div class="metric-trend" [class]="'trend-' + metric.trend">
+                  <mat-icon>{{ metric.trend === 'up' ? 'trending_up' : metric.trend === 'down' ? 'trending_down' : 'trending_flat' }}</mat-icon>
+                  <span>{{ metric.change > 0 ? '+' : '' }}{{ metric.change }}</span>
+                </div>
+              </div>
+              <div class="metric-content">
+                <h3>{{ metric.value }}</h3>
+                <p>{{ metric.name }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Activity Feed -->
+        <div class="activity-section">
+          <div class="activity-header">
+            <h3>Live Activity Feed</h3>
+            <span class="activity-count">{{ liveActivities.length }} activities</span>
+          </div>
+          
+          <div class="activity-feed">
+            <div *ngFor="let activity of liveActivities" class="activity-item"
+                 [style.border-left-color]="getActivityColor(activity.type)">
+              <div class="activity-icon">
+                <mat-icon [style.color]="getActivityColor(activity.type)">
+                  {{ getActivityIcon(activity.type) }}
+                </mat-icon>
+              </div>
+              <div class="activity-content">
+                <p class="activity-message">{{ activity.message }}</p>
+                <div class="activity-meta">
+                  <span class="activity-time">{{ formatTimeAgo(activity.timestamp) }}</span>
+                  <mat-chip [color]="activity.priority === 'high' ? 'warn' : activity.priority === 'medium' ? 'accent' : 'primary'" 
+                           selected class="priority-chip">
+                    {{ activity.priority }}
+                  </mat-chip>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance Alerts -->
+        <div class="alerts-section" *ngIf="alerts.length > 0">
+          <h3>Performance Alerts</h3>
+          <div class="alerts-list">
+            <div *ngFor="let alert of alerts" class="alert-item high-priority">
+              <div class="alert-icon">
+                <mat-icon color="warn">warning</mat-icon>
+              </div>
+              <div class="alert-content">
+                <p class="alert-message">{{ alert.message }}</p>
+                <span class="alert-time">{{ formatTimeAgo(alert.timestamp) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <h3>Quick Actions</h3>
+          <div class="actions-grid">
+            <button mat-raised-button color="primary">
+              <mat-icon>assessment</mat-icon>
+              Generate Report
+            </button>
+            <button mat-raised-button color="accent">
+              <mat-icon>notifications</mat-icon>
+              Manage Alerts
+            </button>
+            <button mat-raised-button color="warn">
+              <mat-icon>warning</mat-icon>
+              View Issues
+            </button>
+            <button mat-raised-button>
+              <mat-icon>settings</mat-icon>
+              Analytics Settings
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 

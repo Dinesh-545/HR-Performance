@@ -1,0 +1,51 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>HR Performance Management</mat-card-title>
+      <mat-card-subtitle>Sign in to your account</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput 
+                 [(ngModel)]="loginData.username" 
+                 name="username"
+                 required
+                 placeholder="Enter your username">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput 
+                 type="password"
+                 [(ngModel)]="loginData.password" 
+                 name="password"
+                 required
+                 placeholder="Enter your password">
+        </mat-form-field>
+
+        <button mat-raised-button 
+                color="primary" 
+                type="submit"
+                [disabled]="loading || !loginForm.valid"
+                class="full-width">
+          <span *ngIf="!loading">Sign In</span>
+          <span *ngIf="loading">Signing In...</span>
+        </button>
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer>
+      <div class="demo-accounts">
+        <h4>Demo Accounts:</h4>
+        <ul>
+          <li><strong>Employee:</strong> john.doe / password123</li>
+          <li><strong>Manager:</strong> jane.smith / password123</li>
+          <li><strong>HR Admin:</strong> alice.brown / password123</li>
+        </ul>
+      </div>
+    </mat-card-footer>
+  </mat-card>
+</div> 

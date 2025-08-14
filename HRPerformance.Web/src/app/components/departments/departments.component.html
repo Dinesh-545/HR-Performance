@@ -1,0 +1,121 @@
+<div class="departments-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Department Management</mat-card-title>
+      <mat-card-subtitle>Manage organizational departments</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <mat-icon>business</mat-icon>
+          <div class="card-text">
+            <h3>{{ departments.length }}</h3>
+            <p>Total Departments</p>
+          </div>
+        </div>
+        <div class="summary-card">
+          <mat-icon>people</mat-icon>
+          <div class="card-text">
+            <h3>{{ employees.length }}</h3>
+            <p>Total Employees</p>
+          </div>
+        </div>
+        <div class="summary-card">
+          <mat-icon>trending_up</mat-icon>
+          <div class="card-text">
+            <h3>{{ getAverageEmployeesPerDepartment() }}</h3>
+            <p>Avg Employees/Dept</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters Section -->
+      <div class="filters-section">
+        <div class="search-filter">
+          <mat-form-field appearance="outline">
+            <mat-label>Search Departments</mat-label>
+            <input matInput [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Search by name or description">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <button mat-button color="warn" (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+
+      <!-- Add Department Button -->
+      <div class="add-department-section">
+        <button mat-raised-button color="primary" (click)="openAddDepartmentDialog()">
+          <mat-icon>add</mat-icon>
+          Add New Department
+        </button>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading departments...</p>
+      </div>
+
+      <!-- Departments Table -->
+      <div *ngIf="!loading" class="table-container">
+        <table mat-table [dataSource]="filteredDepartments" class="departments-table">
+          <!-- ID Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let department">{{ department.Id || department.id }}</td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Department Name</th>
+            <td mat-cell *matCellDef="let department">
+              <div class="department-name">
+                <strong>{{ department.Name || department.name }}</strong>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Employee Count Column -->
+          <ng-container matColumnDef="employeeCount">
+            <th mat-header-cell *matHeaderCellDef>Employees</th>
+            <td mat-cell *matCellDef="let department">
+              <span class="employee-count">{{ getEmployeeCount(department.Id || department.id) }} employees</span>
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let department">
+              <div class="action-buttons">
+                <button mat-icon-button color="primary" (click)="openEditDepartmentDialog(department)" 
+                        matTooltip="Edit Department">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteDepartment(department)" 
+                        matTooltip="Delete Department">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <!-- No Data Message -->
+        <div *ngIf="filteredDepartments.length === 0" class="no-data">
+          <mat-icon>business_outline</mat-icon>
+          <p>No departments found</p>
+          <p *ngIf="searchTerm">Try adjusting your search</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 

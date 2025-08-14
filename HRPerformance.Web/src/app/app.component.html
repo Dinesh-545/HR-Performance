@@ -1,0 +1,36 @@
+<mat-toolbar color="primary" *ngIf="authService.isAuthenticated()">
+  <span>HR Performance Management</span>
+  <span class="spacer"></span>
+  
+  <!-- Navigation buttons with role-based visibility -->
+  <button mat-button routerLink="/dashboard">Dashboard</button>
+  
+  <button mat-button routerLink="/employees" *appRole="['Employee', 'Manager', 'HR Admin']">Employees</button>
+  <button mat-button routerLink="/goals" *appRole="['Employee', 'Manager', 'HR Admin']">Goals</button>
+  <button mat-button routerLink="/reviews" *appRole="['Employee', 'Manager', 'HR Admin']">Reviews</button>
+  <button mat-button routerLink="/skills" *appRole="['Employee', 'Manager', 'HR Admin']">Skills</button>
+  <button mat-button routerLink="/departments" *appRole="['Employee', 'Manager', 'HR Admin']">Departments</button>
+  
+  <button mat-button routerLink="/analytics" *appRole="['Manager', 'HR Admin']">Analytics</button>
+  <button mat-button routerLink="/advanced-analytics" *appRole="['HR Admin']">Advanced Analytics</button>
+  <button mat-button routerLink="/real-time-analytics" *appRole="['HR Admin']">Real-Time</button>
+  
+  <button mat-icon-button [matMenuTriggerFor]="userMenu">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+  <mat-menu #userMenu="matMenu">
+    <button mat-menu-item disabled>
+      <mat-icon>person</mat-icon>
+      <span>{{ getCurrentUserRole() }}</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>

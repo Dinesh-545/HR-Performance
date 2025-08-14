@@ -1,0 +1,97 @@
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+html, body { 
+  height: 100%; 
+  margin: 0;
+  padding: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  overflow-x: hidden;
+}
+
+body { 
+  margin: 0; 
+  padding: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Snackbar Styles */
+.success-snackbar {
+  background: #4caf50;
+  color: white;
+}
+
+.error-snackbar {
+  background: #f44336;
+  color: white;
+}
+
+/* Role Badge Styles */
+.role-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.role-employee {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.role-manager {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.role-hr-admin {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Employee Name */
+.employee-name {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Add Employee Section */
+.add-employee-section {
+  margin: 16px 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Results Summary */
+.results-summary {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* No Data */
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.no-data mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+}

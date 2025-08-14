@@ -1,0 +1,129 @@
+<div class="skills-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Skills Management</mat-card-title>
+      <mat-card-subtitle>Manage employee skills and competencies</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <mat-icon>psychology</mat-icon>
+          <div class="card-text">
+            <h3>{{ skills.length }}</h3>
+            <p>Total Skills</p>
+          </div>
+        </div>
+        <div class="summary-card">
+          <mat-icon>people</mat-icon>
+          <div class="card-text">
+            <h3>{{ employees.length }}</h3>
+            <p>Employees</p>
+          </div>
+        </div>
+        <div class="summary-card">
+          <mat-icon>star</mat-icon>
+          <div class="card-text">
+            <h3>{{ getAverageSkillsPerEmployee() }}</h3>
+            <p>Avg Skills/Employee</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters Section -->
+      <div class="filters-section">
+        <div class="search-filter">
+          <mat-form-field appearance="outline">
+            <mat-label>Search Skills</mat-label>
+            <input matInput [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Search by name or description">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <button mat-button color="warn" (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+
+      <!-- Add Skill Button -->
+      <div class="add-skill-section">
+        <button mat-raised-button color="primary" (click)="openAddSkillDialog()">
+          <mat-icon>add</mat-icon>
+          Add New Skill
+        </button>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading skills...</p>
+      </div>
+
+      <!-- Skills Table -->
+      <div *ngIf="!loading" class="table-container">
+        <table mat-table [dataSource]="filteredSkills" class="skills-table">
+          <!-- ID Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let skill">{{ skill.Id || skill.id }}</td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Skill Name</th>
+            <td mat-cell *matCellDef="let skill">
+              <div class="skill-name">
+                <strong>{{ skill.Name || skill.name }}</strong>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Description Column -->
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef>Description</th>
+            <td mat-cell *matCellDef="let skill">
+              <p class="skill-description">{{ skill.Description || skill.description }}</p>
+            </td>
+          </ng-container>
+
+          <!-- Employees Column -->
+          <ng-container matColumnDef="employees">
+            <th mat-header-cell *matHeaderCellDef>Employees</th>
+            <td mat-cell *matCellDef="let skill">
+              <span class="employee-count">{{ getEmployeeCount(skill.Id || skill.id) }} employees</span>
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let skill">
+              <div class="action-buttons">
+                <button mat-icon-button color="primary" (click)="openEditSkillDialog(skill)" 
+                        matTooltip="Edit Skill">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteSkill(skill)" 
+                        matTooltip="Delete Skill">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <!-- No Data Message -->
+        <div *ngIf="filteredSkills.length === 0" class="no-data">
+          <mat-icon>psychology_outline</mat-icon>
+          <p>No skills found</p>
+          <p *ngIf="searchTerm">Try adjusting your search</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 

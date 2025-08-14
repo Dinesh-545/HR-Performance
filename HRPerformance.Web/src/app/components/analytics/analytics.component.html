@@ -1,0 +1,152 @@
+<div class="analytics-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>HR Performance Analytics</mat-card-title>
+      <mat-card-subtitle>Data-driven insights for better HR decisions</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <mat-icon>people</mat-icon>
+          <div class="card-text">
+            <h3>{{ metrics.totalEmployees }}</h3>
+            <p>Total Employees</p>
+          </div>
+        </div>
+        <div class="summary-card">
+          <mat-icon>check_circle</mat-icon>
+          <div class="card-text">
+            <h3>{{ metrics.goalCompletionRate }}%</h3>
+            <p>Goal Completion Rate</p>
+          </div>
+        </div>
+        <div class="summary-card">
+          <mat-icon>star</mat-icon>
+          <div class="card-text">
+            <h3>{{ metrics.averageRating | number:'1.1-1' }}</h3>
+            <p>Average Review Rating</p>
+          </div>
+        </div>
+        <div class="summary-card">
+          <mat-icon>pending_actions</mat-icon>
+          <div class="card-text">
+            <h3>{{ metrics.pendingReviews }}</h3>
+            <p>Pending Reviews</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading analytics data...</p>
+      </div>
+
+      <div *ngIf="!loading">
+        <mat-tab-group animationDuration="0ms">
+          <mat-tab label="Performance Overview">
+            <div class="tab-content">
+              <!-- Charts Section -->
+              <div class="charts-section">
+                <div class="chart-row">
+                  <div class="chart-card">
+                    <h4>Goal Status Overview</h4>
+                    <div class="chart-container">
+                      <canvas #overviewChart></canvas>
+                    </div>
+                  </div>
+                  <div class="chart-card">
+                    <h4>Performance Trends</h4>
+                    <div class="chart-container">
+                      <canvas #performanceChart></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h3>Top Performers (Avg Rating >= 4)</h3>
+              <div class="top-performers-list">
+                <mat-chip-listbox aria-label="Top Performers">
+                  <mat-chip-option *ngIf="metrics.topPerformers.length === 0">No top performers identified yet.</mat-chip-option>
+                  <mat-chip-option *ngFor="let employee of metrics.topPerformers" color="primary" selected>
+                    <mat-icon matChipAvatar>person</mat-icon>
+                    {{ getEmployeeName(employee.id) }}
+                  </mat-chip-option>
+                </mat-chip-listbox>
+              </div>
+
+              <h3>Department Performance Overview</h3>
+              <div class="department-performance-list">
+                <mat-card *ngFor="let dept of metrics.departmentPerformance" class="department-card">
+                  <mat-card-header>
+                    <mat-card-title>{{ dept.name }}</mat-card-title>
+                    <mat-card-subtitle>{{ dept.employeeCount }} Employees</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <p>Goals: {{ dept.goalCount }}</p>
+                    <p>Completion Rate: <strong>{{ dept.completionRate }}%</strong></p>
+                    <mat-progress-bar mode="determinate" [value]="dept.completionRate"
+                      [color]="dept.completionRate >= 70 ? 'primary' : (dept.completionRate >= 40 ? 'accent' : 'warn')">
+                    </mat-progress-bar>
+                  </mat-card-content>
+                </mat-card>
+                <div *ngIf="metrics.departmentPerformance.length === 0" class="no-data">
+                  <p>No department data available.</p>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="Skill Analysis">
+            <div class="tab-content">
+              <h3>Identified Skill Gaps</h3>
+              <div class="skill-gaps-list">
+                <mat-chip-listbox aria-label="Skill Gaps">
+                  <mat-chip-option *ngIf="metrics.skillGaps.length === 0">No significant skill gaps identified.</mat-chip-option>
+                  <mat-chip-option *ngFor="let gap of metrics.skillGaps" color="warn" selected>
+                    <mat-icon matChipAvatar>warning</mat-icon>
+                    {{ gap.skill }} in {{ gap.department }} ({{ gap.gapPercentage }}% gap)
+                  </mat-chip-option>
+                </mat-chip-listbox>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="Recommendations">
+            <div class="tab-content">
+              <h3>AI-Powered Recommendations</h3>
+              <div class="recommendations-list">
+                <div *ngIf="metrics.recommendations.length === 0" class="no-data">
+                  <p>No recommendations generated at this time.</p>
+                </div>
+                <mat-card *ngFor="let rec of metrics.recommendations" class="recommendation-card">
+                  <mat-card-header>
+                    <div class="recommendation-header">
+                      <span class="priority-badge" [class]="'priority-' + rec.priority.toLowerCase()">{{ rec.priority }}</span>
+                      <span class="category-chip">{{ rec.category }}</span>
+                    </div>
+                    <mat-card-title>{{ rec.title }}</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <p>{{ rec.description }}</p>
+                    <div class="action-items" *ngIf="rec.actionItems && rec.actionItems.length > 0">
+                      <h5>Action Items:</h5>
+                      <ul>
+                        <li *ngFor="let item of rec.actionItems">{{ item }}</li>
+                      </ul>
+                    </div>
+                    <div class="impact" *ngIf="rec.impact">
+                      <strong>Impact:</strong> {{ rec.impact }}
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 

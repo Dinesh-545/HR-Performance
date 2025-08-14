@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "/1t428SBMktD5OmgTqDlk81UDulS3dlvFnvBTILjPRI=",
+  "Source": "HRPerformance.Api",
+  "BasePath": "_content/HRPerformance.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

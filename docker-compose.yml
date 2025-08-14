@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - hr-network
+
+  # .NET Backend API
+  api:
+    build:
+      context: ./HRPerformance.Api
+      dockerfile: Dockerfile
+    ports:
+      - "7001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=HRPerformanceDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true
+      - Jwt__Key=your-super-secret-key-here
+      - Jwt__Issuer=HRPerformance
+    depends_on:
+      - sqlserver
+    networks:
+      - hr-network
+    volumes:
+      - ./HRPerformance.Api:/app
+      - /app/bin
+      - /app/obj
+
+  # Angular Frontend
+  frontend:
+    build:
+      context: ./HRPerformance.Web
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+    networks:
+      - hr-network
+    environment:
+      - API_BASE_URL=http://api:80
+
+  # Optional: Redis for caching (if needed)
+  # redis:
+  #   image: redis:alpine
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - hr-network
+
+volumes:
+  sqlserver_data:
+
+networks:
+  hr-network:
+    driver: bridge 

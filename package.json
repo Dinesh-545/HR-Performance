@@ -1,0 +1,19 @@
+{
+  "name": "hr-performance-rbac-tests",
+  "version": "1.0.0",
+  "description": "RBAC integration tests for HR Performance Management System",
+  "main": "test_rbac.js",
+  "scripts": {
+    "test": "node test_rbac.js"
+  },
+  "dependencies": {
+    "axios": "^1.11.0"
+  },
+  "keywords": [
+    "rbac",
+    "testing",
+    "integration"
+  ],
+  "author": "HR Performance Team",
+  "license": "MIT"
+}

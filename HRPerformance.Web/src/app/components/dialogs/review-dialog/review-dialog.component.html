@@ -1,0 +1,103 @@
+<div class="review-dialog">
+  <h2 mat-dialog-title>{{ data.isEdit ? 'Edit Review' : 'Add New Review' }}</h2>
+  
+  <form [formGroup]="reviewForm" (ngSubmit)="onSubmit()">
+    <mat-dialog-content>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Reviewee (Employee)</mat-label>
+          <mat-select formControlName="revieweeId">
+            <mat-option value="">Select Employee</mat-option>
+            <mat-option *ngFor="let emp of employees" [value]="emp.id">
+              {{ getEmployeeName(emp.id) }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="reviewForm.get('revieweeId')?.invalid">
+            {{ getErrorMessage('revieweeId') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Reviewer</mat-label>
+          <mat-select formControlName="reviewerId">
+            <mat-option value="">Select Reviewer</mat-option>
+            <mat-option *ngFor="let emp of employees" [value]="emp.id">
+              {{ getEmployeeName(emp.id) }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="reviewForm.get('reviewerId')?.invalid">
+            {{ getErrorMessage('reviewerId') }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Review Cycle</mat-label>
+          <mat-select formControlName="cycleId">
+            <mat-option [value]="1">Cycle 1 - Q1 2024</mat-option>
+            <mat-option [value]="2">Cycle 2 - Q2 2024</mat-option>
+            <mat-option [value]="3">Cycle 3 - Q3 2024</mat-option>
+            <mat-option [value]="4">Cycle 4 - Q4 2024</mat-option>
+          </mat-select>
+          <mat-error *ngIf="reviewForm.get('cycleId')?.invalid">
+            {{ getErrorMessage('cycleId') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Review Template</mat-label>
+          <mat-select formControlName="templateId">
+            <mat-option [value]="1">Standard Performance Review</mat-option>
+            <mat-option [value]="2">360 Degree Review</mat-option>
+            <mat-option [value]="3">Peer Review</mat-option>
+          </mat-select>
+          <mat-error *ngIf="reviewForm.get('templateId')?.invalid">
+            {{ getErrorMessage('templateId') }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Rating (1-5)</mat-label>
+          <mat-select formControlName="rating">
+            <mat-option [value]="0">Not Rated</mat-option>
+            <mat-option *ngFor="let rating of ratingOptions" [value]="rating">
+              {{ rating }} - {{ getRatingText(rating) }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="reviewForm.get('rating')?.invalid">
+            {{ getErrorMessage('rating') }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Comments</mat-label>
+        <textarea matInput formControlName="comments" rows="4" 
+                  placeholder="Enter detailed review comments..."></textarea>
+        <mat-error *ngIf="reviewForm.get('comments')?.invalid">
+          {{ getErrorMessage('comments') }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Attachment Path (Optional)</mat-label>
+        <input matInput formControlName="attachmentPath" 
+               placeholder="Enter file path for attachments">
+      </mat-form-field>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button type="button" (click)="onCancel()" [disabled]="loading">
+        Cancel
+      </button>
+      <button mat-raised-button color="primary" type="submit" 
+              [disabled]="reviewForm.invalid || loading">
+        <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+        <span *ngIf="!loading">{{ data.isEdit ? 'Update' : 'Create' }}</span>
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div> 

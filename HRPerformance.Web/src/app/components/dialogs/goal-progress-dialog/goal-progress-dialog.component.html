@@ -1,0 +1,51 @@
+<div class="goal-progress-dialog">
+  <h2 mat-dialog-title>Update Goal Progress</h2>
+  
+  <form [formGroup]="progressForm" (ngSubmit)="onSubmit()">
+    <mat-dialog-content>
+      <div class="goal-info">
+        <h3>{{ data.goal.Title || data.goal.title }}</h3>
+        <p class="goal-description">{{ data.goal.Description || data.goal.description }}</p>
+      </div>
+
+      <div class="progress-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Progress Percentage</mat-label>
+          <input matInput formControlName="progress" type="number" min="0" max="100">
+          <span matTextSuffix>%</span>
+        </mat-form-field>
+
+        <div class="slider-container">
+          <mat-slider 
+            formControlName="progress"
+            min="0" 
+            max="100" 
+            step="5"
+            (change)="onSliderChange($event)">
+          </mat-slider>
+          <div class="slider-labels">
+            <span>0%</span>
+            <span>50%</span>
+            <span>100%</span>
+          </div>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Notes</mat-label>
+        <textarea matInput formControlName="notes" rows="3" 
+                  placeholder="Add notes about the progress..."></textarea>
+      </mat-form-field>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button type="button" (click)="onCancel()">
+        Cancel
+      </button>
+      <button mat-raised-button color="primary" type="submit" 
+              [disabled]="progressForm.invalid">
+        Update Progress
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div> 

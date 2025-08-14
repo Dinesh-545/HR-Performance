@@ -1,0 +1,47 @@
+flowchart TD
+  subgraph "Frontend (Angular)"
+    A1["/src/app/auth"]
+    A2["/src/app/employee"]
+    A3["/src/app/goals"]
+    A4["/src/app/reviews"]
+    A5["/src/app/skills"]
+    A6["/src/app/analytics"]
+    A7["/src/app/core (services, guards)"]
+  end
+  subgraph "Backend (.NET 7+ Web API)"
+    B1["/Services/EmployeeService"]
+    B2["/Services/GoalService"]
+    B3["/Services/ReviewService"]
+    B4["/Services/SkillService"]
+    B5["/Services/ReportingService"]
+    B6["/Services/AuthService"]
+    B7["/Data/ApplicationDbContext"]
+    B8["/Models (Entities, DTOs)"]
+    B9["/Controllers"]
+  end
+  subgraph "Database (SQL Server)"
+    C1["Employee Table"]
+    C2["Goal Table"]
+    C3["Review Table"]
+    C4["Skill Table"]
+    C5["DevelopmentPlan Table"]
+    C6["User Table"]
+  end
+  A1-->|REST API|B6
+  A2-->|REST API|B1
+  A3-->|REST API|B2
+  A4-->|REST API|B3
+  A5-->|REST API|B4
+  A6-->|REST API|B5
+  B1-->|EF Core|B7
+  B2-->|EF Core|B7
+  B3-->|EF Core|B7
+  B4-->|EF Core|B7
+  B5-->|EF Core|B7
+  B6-->|EF Core|B7
+  B7-->|SQL|C1
+  B7-->|SQL|C2
+  B7-->|SQL|C3
+  B7-->|SQL|C4
+  B7-->|SQL|C5
+  B7-->|SQL|C6 

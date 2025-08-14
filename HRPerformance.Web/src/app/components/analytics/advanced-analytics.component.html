@@ -1,0 +1,276 @@
+<div class="advanced-analytics-container">
+  <!-- Header with Controls -->
+  <div class="header-section">
+    <div class="header-content">
+      <h1>Advanced Analytics Dashboard</h1>
+      <p>Comprehensive HR performance analytics with real-time insights</p>
+    </div>
+    
+    <div class="controls-section">
+      <!-- Real-time Toggle -->
+      <mat-slide-toggle 
+        [checked]="isLive" 
+        (change)="toggleLiveUpdates()"
+        color="primary">
+        <mat-icon>live_tv</mat-icon>
+        Live Updates
+      </mat-slide-toggle>
+
+      <!-- Theme Selector -->
+      <mat-form-field appearance="outline" class="theme-selector">
+        <mat-label>Theme</mat-label>
+        <mat-select [(value)]="selectedTheme" (selectionChange)="applyTheme($event.value)">
+          <mat-option value="light">Light</mat-option>
+          <mat-option value="dark">Dark</mat-option>
+          <mat-option value="brand">Brand</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Export Format -->
+      <mat-form-field appearance="outline" class="export-selector">
+        <mat-label>Export Format</mat-label>
+        <mat-select [(value)]="exportFormat">
+          <mat-option value="pdf">PDF</mat-option>
+          <mat-option value="excel">Excel</mat-option>
+          <mat-option value="png">PNG</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Action Buttons -->
+      <button mat-raised-button color="primary" (click)="exportCharts()">
+        <mat-icon>download</mat-icon>
+        Export All
+      </button>
+      
+      <button mat-raised-button color="accent" (click)="refreshData()">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading advanced analytics...</p>
+  </div>
+
+  <!-- Live Metrics Section -->
+  <div *ngIf="!loading && liveMetrics.length > 0" class="live-metrics-section">
+    <h3>Live Performance Metrics</h3>
+    <div class="metrics-grid">
+      <mat-card *ngFor="let metric of liveMetrics" class="metric-card">
+        <mat-card-content>
+          <div class="metric-header">
+            <h4>{{ metric.name }}</h4>
+            <mat-icon [class]="'trend-' + metric.trend">
+              {{ metric.trend === 'up' ? 'trending_up' : metric.trend === 'down' ? 'trending_down' : 'trending_flat' }}
+            </mat-icon>
+          </div>
+          <div class="metric-value" [style.color]="metric.color">
+            {{ metric.value }}%
+          </div>
+          <div class="metric-change" [class]="'change-' + metric.trend">
+            {{ metric.change > 0 ? '+' : '' }}{{ metric.change }}%
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Main Analytics Content -->
+  <div *ngIf="!loading" class="analytics-content">
+    
+    <!-- Basic Charts Section -->
+    <div class="charts-section">
+      <h3>Core Performance Metrics</h3>
+      <div class="chart-grid">
+        <!-- Goal Completion Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4>Goal Completion Status</h4>
+          </div>
+          <div class="chart-container">
+            <canvas #goalChart></canvas>
+          </div>
+        </div>
+
+        <!-- Performance Trend Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4>Performance Trends</h4>
+          </div>
+          <div class="chart-container">
+            <canvas #performanceChart></canvas>
+          </div>
+        </div>
+
+        <!-- Department Comparison Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4>Department Performance</h4>
+          </div>
+          <div class="chart-container">
+            <canvas #departmentChart></canvas>
+          </div>
+        </div>
+
+        <!-- Employee Performance Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4>Employee Performance Overview</h4>
+          </div>
+          <div class="chart-container">
+            <canvas #employeeChart></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced Charts Section -->
+    <div class="charts-section">
+      <h3>Advanced Analytics</h3>
+      <div class="chart-grid">
+        <!-- Bubble Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4>Employee Performance Analysis</h4>
+          </div>
+          <div class="chart-container">
+            <canvas #bubbleChart></canvas>
+          </div>
+        </div>
+
+        <!-- Scatter Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4>Skill vs Performance Correlation</h4>
+          </div>
+          <div class="chart-container">
+            <canvas #scatterChart></canvas>
+          </div>
+        </div>
+
+        <!-- Polar Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4>Department Skills Overview</h4>
+          </div>
+          <div class="chart-container">
+            <canvas #polarChart></canvas>
+          </div>
+        </div>
+
+        <!-- Stacked Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4>Monthly Performance Distribution</h4>
+          </div>
+          <div class="chart-container">
+            <canvas #stackedChart></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Charts Section -->
+    <div class="charts-section">
+      <h3>Trend Analysis</h3>
+      <div class="chart-grid">
+        <!-- Skill Distribution Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4>Skill Distribution</h4>
+          </div>
+          <div class="chart-container">
+            <canvas #skillChart></canvas>
+          </div>
+        </div>
+
+        <!-- Monthly Trends Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4>Monthly Performance Trends</h4>
+          </div>
+          <div class="chart-container">
+            <canvas #trendsChart></canvas>
+          </div>
+        </div>
+
+        <!-- Area Chart -->
+        <div class="chart-card full-width">
+          <div class="chart-header">
+            <h4>Cumulative Performance Over Time</h4>
+          </div>
+          <div class="chart-container">
+            <canvas #areaChart></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Activity Feed -->
+    <div *ngIf="liveActivities.length > 0" class="activity-section">
+      <h3>Live Activity Feed</h3>
+      <div class="activity-list">
+        <mat-card *ngFor="let activity of liveActivities.slice(0, 10)" class="activity-card">
+          <mat-card-content>
+            <div class="activity-header">
+              <mat-icon [class]="'activity-' + activity.type">
+                {{ activity.type === 'goal_completed' ? 'check_circle' : 
+                   activity.type === 'review_submitted' ? 'rate_review' :
+                   activity.type === 'employee_added' ? 'person_add' : 'school' }}
+              </mat-icon>
+              <span class="activity-message">{{ activity.message }}</span>
+              <span class="activity-time">{{ activity.timestamp | date:'shortTime' }}</span>
+            </div>
+            <div class="activity-details">
+              <mat-chip *ngIf="activity.employee" color="primary" selected>
+                {{ activity.employee }}
+              </mat-chip>
+              <mat-chip *ngIf="activity.department" color="accent" selected>
+                {{ activity.department }}
+              </mat-chip>
+              <mat-chip [color]="activity.priority === 'high' ? 'warn' : 'primary'" selected>
+                {{ activity.priority }}
+              </mat-chip>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Performance Alerts -->
+    <div *ngIf="performanceAlerts.length > 0" class="alerts-section">
+      <h3>Performance Alerts</h3>
+      <div class="alerts-list">
+        <mat-card *ngFor="let alert of performanceAlerts.slice(0, 5)" 
+                  class="alert-card" 
+                  [class]="'alert-' + alert.type">
+          <mat-card-content>
+            <div class="alert-header">
+              <mat-icon [class]="'alert-' + alert.type">
+                {{ alert.type === 'warning' ? 'warning' : 
+                   alert.type === 'error' ? 'error' :
+                   alert.type === 'success' ? 'check_circle' : 'info' }}
+              </mat-icon>
+              <span class="alert-message">{{ alert.message }}</span>
+              <span class="alert-time">{{ alert.timestamp | date:'shortTime' }}</span>
+            </div>
+            <div class="alert-details">
+              <mat-chip *ngIf="alert.department" color="primary" selected>
+                {{ alert.department }}
+              </mat-chip>
+              <mat-chip *ngIf="alert.employee" color="accent" selected>
+                {{ alert.employee }}
+              </mat-chip>
+              <mat-chip *ngIf="alert.actionRequired" color="warn" selected>
+                Action Required
+              </mat-chip>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div> 
